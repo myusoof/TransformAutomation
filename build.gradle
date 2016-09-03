@@ -1,0 +1,93 @@
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'application'
+apply from : 'external-dependencies.gradle'
+
+repositories {
+    mavenCentral()
+}
+
+repositories {
+    maven {
+        url "http://repo.bodar.com/"
+    }
+}
+
+sourceSets.main.groovy.srcDirs = ['src/main/groovy']
+sourceSets.main.resources.srcDirs = ['src/main/resources']
+sourceSets.test.groovy.srcDirs = ['src/test/groovy']
+sourceSets.test.resources.srcDirs = ['src/test/resources']
+
+dependencies {
+    compile restClient1, jackson, jacksonJaxRs, jacksonDataType, jaxws
+    compile cucumberGroovy, webdriver
+    testCompile cucumberJunit
+    testCompile junit
+    compile group: 'net.masterthought', name: 'cucumber-reporting', version: "0.4.0"
+    compile group: 'com.googlecode.totallylazy', name: 'totallylazy', version: '1.20'
+    testCompile groovy
+    compile groovy
+    }
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
+}
+def getDate(){
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
+}
+
+def args = ['--strict', '--monochrome',
+            '--glue', 'src/test/groovy/com/transform/RestAutomation/steps', 'src/test/groovy/com/transform/RestAutomation/features',
+            '--format', "html:target/transform-html-report${getDate()}",
+            //'--format', 'junit:target/cucumber-junit-report.xml',
+            '--format', "json:target/transform-report${getDate()}.json",
+            '--tags','@restService, @nottoinclude']
+
+def webDriverArgs = ['--strict', '--monochrome',
+            '--glue', 'src/test/groovy/com/transform/RestAutomation/steps', 'src/test/groovy/com/transform/RestAutomation/features',
+            '--format', "html:target/webDriver/transform-html-report${getDate()}",
+            //'--format', 'junit:target/cucumber-junit-report.xml',
+            '--format', "json:target/webDriver/transform-report${getDate()}.json",
+            '--tags','@webDriver']
+
+
+task cucumber {
+    dependsOn assemble
+    doLast {
+        runCucumberTest(args)
+    }
+}
+
+
+task webDriverTest {
+    dependsOn assemble
+    doLast {
+        runCucumberTest(webDriverArgs)
+    }
+}
+
+def runCucumberTest(cukeArgs) {
+    println "** Cucumber arguments: " + cukeArgs
+    javaexec {
+        main = "cucumber.api.cli.Main"
+        classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+        args = cukeArgs
+    }
+}
+
+mainClassName = "com.transform.helper.ReportingClass"
+
+
+task cucumberReport(type: JavaExec) {
+    main = "com.RestAutomation.helper.ReportingClass"
+    classpath = sourceSets.test.runtimeClasspath
+}
+
+cucumberReport {
+    shouldRunAfter "cucumber"
+}
+

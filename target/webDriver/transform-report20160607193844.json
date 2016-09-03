@@ -1,0 +1,52 @@
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 5,
+        "name": "I have to test the first link",
+        "description": "",
+        "id": "webdriver-extension;i-have-to-test-the-first-link",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 1686825001,
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "I launch the browser",
+            "match": {
+              "location": "WebDriverStep.groovy:19"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 1814337,
+              "status": "passed"
+            },
+            "line": 7,
+            "name": "I click on the first link",
+            "match": {
+              "location": "WebDriverStep.groovy:24"
+            },
+            "keyword": "Given "
+          }
+        ],
+        "tags": [
+          {
+            "line": 4,
+            "name": "@webDriver"
+          }
+        ]
+      }
+    ],
+    "name": "WebDriver extension",
+    "description": "I would like to test application",
+    "id": "webdriver-extension",
+    "keyword": "Feature",
+    "uri": "WebDriver_extension.feature"
+  }
+]
